@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Health Checker</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" src="{{url_for('static', filename='/img/favicon.ico')}}" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="static/css/styles.css" rel="stylesheet" />
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        
+
+            <script type="text/javascript">
+                showSites(); //바꿈 1
+                $(document).ready(function () {
+                    $("#sites-box").html("");
+                    //showSites();
+
+                    $
+                });
+                
+                function logout() {
+                    location.href='/logout'
+                }
+
+                function checkStatus() {
+                    $("div_loader").show()
+                    $.ajax({
+                        type: "POST",
+                        url: "/index",
+                        data: {},
+                        
+                        beforeSend: function(){
+                            $("#div_loader").show();
+                            $("table").hide()
+                        },
+                        success: function (response) {
+                            if (response["result"] == "success") {
+                                //$("#div_loader").hidden()
+                                alert(response["msg"]);
+                                window.location.reload();
+                            }
+                        },
+                        complete:function(data){
+                            $("#table").show()
+                            $("#div_loader").hide();
+                        }
+                    })
+                }
+                
+                function showSites() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/index",
+                        data: {},
+                        success: function (response) {
+                            if (response["result"] == "success") {
+                                //$("#div_loader").hidden()
+
+                                let sites = response['sites'];
+                                for(let i = 0; i < sites.length; i++) {
+                                    
+                                    let site_owner = sites[i][0];
+                                    let site_url = sites[i][1];
+                                    let owner_email = sites[i][2];
+                                    let site_status = sites[i][3];
+                
+                                    let temp_html = `<tr>
+                                                        <td>${site_owner}</td>
+                                                        <td>${site_url}</td>
+                                                        <td>${owner_email}</td>
+                                                        <td>${site_status}</td>
+                                                    </tr>`
+                                    $('#sites-box').append(temp_html);
+                                }
+                                
+                            } else {
+                                alert("Try it again! ( Please click the reload button or push the f5 on your keyboard. )");
+                                
+                            }
+                        }
+                    })
+                }
+            </script>
+            <style type="text/css">
+                * {
+                    font-family: "BMWGroupTNCondensed";
+                }
+            </style>
+
+
+    </head>
+    <body class="d-flex flex-column h-100">
+        
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="/">Health Checker_FG-AP-12</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="about">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="contact">Contact</a></li>
+                            {%if session.get('logFlag')%}
+                            <li class="nav-item"><a class="nav-link" onclick="logout()">Logout</a></li>
+                            {% else%}
+                            <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+                            {%endif%}
+                            <li class="nav-item"><a class="nav-link" href="admin">Admin</a></li>
+                        
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- Header-->
+            <header class="bg-dark py-5">
+                <div class="container px-5">
+                    <div class="row gx-5 align-items-center justify-content-center">
+                        <div class="col-lg-8 col-xl-7 col-xxl-6">
+                            <div class="my-5 text-center text-xl-start">
+                                <h1 class="display-5 fw-bolder text-white mb-2">Check all sites related to BMW NSC Korea</h1>
+                                <p class="lead fw-normal text-white-50 mb-4">The way of checking the sites quickly and easily.<br>Just Click the button below! </p>
+                                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                                    <button  a class="btn btn-primary btn-lg px-4 me-sm-3" onclick=checkStatus() id = "excute" value="execute">Get Started</a>
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <!-- health-checker-frontend/healthcheck/static/img/Bmw.jpg -->
+                        <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5" src="{{url_for('static', filename='/img/Bmw.jpg')}}" /></div>
+                        <!--div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5" src="./../../static/img/Bmw.jpg" alt="..." /></div-->
+                    </div>
+                </div>
+            </header>
+            <!-- Features section-->
+            <section class="py-5" id="features">
+                <div class="container px-5 my-5">
+                    <div class="row gx-5">
+                        <div class="col-lg-4 mb-5 mb-lg-0"><h2 class="fw-bolder mb-0">A better way to check.</h2></div>
+                        
+                        <div class="col-lg-8">
+                            <!--Image loader-->
+                            <div id ="div_loader" class="col-lg-8 col-xxl-6" style='display:none; text-align:center'>
+                                <img src="{{url_for('static', filename='/img/loading.gif')}}" style='width:100px,height:100px;'> </br>
+                                <b>It takes about a minute.</b>
+                            </div>
+                            
+        
+                            <table class="table" id="table">
+                                <thead>
+                                <tr>
+                                    
+                                    <th scope="col">Site Manager</th>
+                                    <th scope="col">URL</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                                </thead>
+                                <tbody id="sites-box">
+                                <tr>
+                                </tr>
+                                </tbody>
+                            </table>
+                           
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+        <!-- Footer-->
+        <footer class="bg-dark py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Health Checker 2022</div></div>
+                    <div class="col-auto">
+                        <a class="link-light small" href="#!">Privacy</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Terms</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        
+    </body>
+</html>

@@ -1,0 +1,232 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style type="text/css">
+            * {
+                font-family: "BMWGroupTNCondensed";
+            }
+        </style>
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Health Checker</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" src="{{url_for('static', filename='/img/favicon.ico')}}" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="static/css/styles.css" rel="stylesheet" />
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+
+    <script type="text/javascript">
+        showSites_admin();
+        $(document).ready(function () {
+            $("#sites-box2").html("");
+            //showSites_admin();
+        });
+        function logout() {
+            //getPageGETMethod('/logout');
+            location.href='/logout'
+        }
+        
+        function addUrl() {
+            let site_owner = $("#site_owner").val();
+            let site_url = $("#site_url").val();
+            let owner_email = $("#owner_email").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/review",
+                data: {site_owner_give: site_owner, site_url_give: site_url, owner_email_give: owner_email},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        alert(response["msg"]);
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+        function deleteUrl() {
+
+            //let site_owner = $("#site_owner").val();
+            let site_url = $("#site_url").val();
+            //let owner_email = $("#owner_email").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/delete",
+                data: {site_url_give: site_url},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        alert(response["msg"]);
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+        function showSites_admin() {
+            // 1. 리뷰 목록을 서버에 요청하기
+            // 2. 요청 성공 여부 확인하기
+            // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
+            $.ajax({
+                type: "GET",
+                url: "/review",
+                data: {},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        let reviews = response['reviews'];
+                        for(let i = 0; i < reviews.length; i++) {
+                            
+                            let site_owner = reviews[i][0];
+                            let site_url = reviews[i][1];
+                            let owner_email = reviews[i][2];
+
+                            let temp_html = `<tr>
+                                                <td>${site_owner}</td>
+                                                <td>${site_url}</td>
+                                                <td>${owner_email}</td>
+                                            </tr>`
+                            $('#sites-box2').append(temp_html);
+                        }
+                    } else {
+                        alert("Sites를 받아오지 못했습니다");
+                    }
+                }
+            })
+        }
+    </script>
+
+    
+</head>
+
+<body>
+  
+    <body class="d-flex flex-column h-100">
+        <main class="flex-shrink-0">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-5">
+                <a class="navbar-brand" href="/">Health Checker_FG-AP-12</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="about">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact">Contact</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="logout()">Logout</a></li>
+                        <li class="nav-item"><a class="nav-link" href="admin">Page MNGT</a></li>
+                        <li class="nav-item"><a class="nav-link" href="usersignup">User MNGT</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--header class="bg-dark py-5">
+            py-5 bg-light
+            <div class="container px-5">
+                <div class="row gx-5 align-items-center justify-content-center">
+                    
+                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5" src="./../../static/img/Bmw.jpg" alt="..." /></div>
+                </div>
+            </div>
+        </header-->
+        
+        <section class="bg-dark py-5" id="scroll-target">
+        <div class="container px-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xxl-6">
+                    <img src="./../../static/img/Bmw.jpg" class="img-fluid" alt="Responsive image">
+                </div>
+            </div>
+        </div>
+        </section>
+
+
+
+        <div class="container">
+           
+            <div class="info">
+                
+                <div class="text-center mb-5">
+                    <br/>
+                    <h1 class="fw-bolder">Add a new site!</h1>
+                    <p class="lead fw-normal text-muted mb-0">You can add a new bmw website to check the status!</p>
+                </div>
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6">
+                        <!-- * * * * * * * * * * * * * * *-->
+                        <!-- * * SB Forms Contact Form * *-->
+                        <!-- * * * * * * * * * * * * * * *-->
+                        <!-- This form is pre-integrated with SB Forms.-->
+                        <!-- To make this form functional, sign up at-->
+                        <!-- https://startbootstrap.com/solution/contact-forms-->
+                        <!-- to get an API token!-->
+                        <form class ="needs-validation">
+                            <!-- Name input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="site_owner" type="text" placeholder="Enter your name..." required />
+                                <label for="site_owner">Site Owner Full name</label>
+                                <div class="invalid-feedback" >A name is required.</div>
+                            </div>
+                            <!-- URL number input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="site_url" type="url" placeholder="https://example.com or http://example.com" pattern="https?://.*" required />
+                                <label for="site_url">https:// or http://</label>
+                                <div class="invalid-feedback">A URL is required.</div>
+                            </div>
+                            <!-- Email address input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="owner_email" type="email" placeholder="name@bmw.co.kr" required />
+                                <label for="owner_email">Owner Email address</label>
+                                <div class="invalid-feedback" data-sb-feedback="owner_email:required">An email is required.</div>
+                                <!--div class="invalid-feedback" data-sb-feedback="owner_email:email">Email is not valid.</div-->
+                            </div>
+                            
+                            
+                            <div class="text-center my-5">
+                                <button onclick="addUrl()" type="button" class="btn btn-primary" type="submit"> Add </button>
+                                <button onclick="deleteUrl()" type="button" class="btn btn-primary" type="submit">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+    </main>
+
+     <!-- Features section-->
+     <section class="py-5" id="features">
+        <div class="container px-5 my-5">
+            <div class="row gx-5">
+                <div class="row gx-5 justify-content-center">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Site Manager</th>
+                                <th scope="col">URL</th>
+                                <th scope="col">Email</th>
+                            </tr>
+                            </thead>
+                            <tbody id="sites-box2">
+                            <tr>
+                            </tr>
+                            </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+
+</html>

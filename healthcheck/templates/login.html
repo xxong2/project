@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content />
+        <meta name="author" content />
+        <title>Health Checker</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" src="{{url_for('static', filename='/img/favicon.ico')}}" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="static/css/styles.css" rel="stylesheet" />
+          <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        
+        <!--script>
+            function chkUserInfo() {
+                var userID = document.getElementById('userID').value.trim();
+                var userPW = document.getElementById("userPW").value.trim();
+                let user_id = $("#userID").val();
+                let user_pw = $("#userPW").val();
+
+                var loginFormID = "loginForm";
+                //window.alert(user_id,user_pw);
+                var loginResultText = document.getElementById("loginResultText");
+            
+                if (!isElementEmpty(userID)) {
+                    loginResultText.textContent = "아이디 값을 입력해주세요.";
+                    return;
+                }
+                if (!isElementEmpty(userPW)) {
+                    loginResultText.textContent = "비밀번호 값을 입력해주세요.";
+                    return;
+                }
+            
+                getPagePOSTMethod("login/get_info", loginFormID);
+                
+            }
+        </script-->
+        
+        <script type="text/javascript">
+                
+            
+            function getPageGETMethod(path, parameters="") {
+                if (parameters == "") {
+                    location.href = path;
+                } else {
+                    location.href = path + "?" + parameters;
+                }
+            }
+            
+            function logout(){
+                getPageGETMethod('/logout');
+            }
+
+            function chkUserInfo() {
+                let user_id = $("#userID").val();
+                let user_pw = $("#userPW").val();
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/login/get_info",
+                    data: {userID: user_id, userPW: user_pw},
+                    success: function (response) {
+                        if (response["result"] == "success") {
+                            alert(response["msg"]);
+                            //location.href='/admin'
+                            getPageGETMethod('/admin')
+                        }
+                        else{
+                            alert("Login Failed")
+                            getPageGETMethod('/relogin')
+                        }
+                    }
+                })
+            }
+            
+        </script>
+        
+        <style type="text/css">
+            * {
+                font-family: "BMWGroupTNCondensed";
+            }
+        </style>    
+    </head>
+    <body class="d-flex flex-column">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <script>
+                alert("{{messages[-1]}}")
+            </script>
+        {% endif %}
+        {% endwith %}
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="/">Health Checker_FG-AP-12</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="about">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="contact">Contact</a></li>
+                            <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="admin">Admin</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- Page content-->
+            <section class="py-5">
+                <div class="container px-5">
+                    <!-- Contact form-->
+                    <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                        <div class="text-center mb-5">
+                            
+                            <h1 class="fw-bolder">Login</h1>
+                            
+                            <p class="lead fw-normal text-muted mb-0", id="loginResultText">
+                            {% if login_result_text %}
+                                Login Failed: Your user ID or password is incorrect!
+                            {%else%}
+                                You should be logged in to access the website listing!!
+                            {% endif %}
+                               </p>
+                            
+                        </div>
+                        <div class="row gx-5 justify-content-center">
+                            <div class="col-lg-8 col-xl-6">
+
+                                <form id="loginForm" >
+                                    
+                                    <!-- Email address input-->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="userID" type="text" name="userID" placeholder="name@example.com" />
+                                        <label for="ID">ID</label>
+                                        <div class="invalid-feedback" >An email is required.</div>
+                                        <div class="invalid-feedback" >Email is not valid.</div>
+                                    </div>
+                                    <!-- PW number input-->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="userPW" name="userPW" type="password" placeholder="PW"  onkeyup="addEnterEvent(chkUserInfo)"/>
+                                        <label for="password">PW</label>
+                                        <div class="invalid-feedback" >PW is required.</div>
+                                    </div>
+                                    
+                                    <!-- Submit Button-->
+                                    <div class="d-grid"><button onclick="chkUserInfo()" class="btn btn-primary" id="submitButton" type="button">Login</button></div>
+                                    
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Footer-->
+        <footer class="bg-dark py-4 mt-auto">
+            
+
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Health Checker 2022</div></div>
+                    <div class="col-auto">
+                        <a class="link-light small" href="#!">Privacy</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Terms</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        
+    </body>
+</html>
